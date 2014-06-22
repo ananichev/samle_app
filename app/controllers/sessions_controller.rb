@@ -16,8 +16,12 @@ class SessionsController < ApplicationController
   end
   
   def destroy
-  	sign_out
-  	redirect_to root_url
+  	if signed_in?
+  	  sign_out
+  	  redirect_to root_url
+  	else
+  	  redirect_to signin_path
+  	end
   end	
   
 	

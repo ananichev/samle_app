@@ -64,6 +64,16 @@ describe "AuthenticationPages" do
   	  	before {delete user_path(user)}
   	  	specify {expect(response).to redirect_to(root_url)}
   	  end
+  	  
+  	  describe "submitting a DELETE request to the User#destroy action" do
+  	  	let(:admin) {FactoryGirl.create(:admin)}
+  	  	before {sign_in admin, no_capybara: true}
+  	  	before {delete user_path(admin)}  	  	
+  	  	specify{expect(response).to redirect_to(root_url)}
+  	  	
+  	  end
+  	  
+  	    	  
   	end 
   	
   	describe "for non-signed-in users" do
@@ -121,6 +131,53 @@ describe "AuthenticationPages" do
   	    end
   	    
   	  end
+  	  
+  	  describe "as user" do
+  	  	let(:user) {FactoryGirl.create(:user)}
+  	  	
+  	  	before {sign_in user, no_capybara: true}
+  	  	
+  	  	describe "submitting a GET request to the User#new action" do
+  	  	  before {get new_user_path}
+  	  	  specify {expect(response).to redirect_to(root_url)}
+  	  	end 
+  	  	
+  	  	describe "submitting a POST request to the User#create action" do
+  	  	  before {post users_path}
+  	  	  specify {expect(response).to redirect_to(root_url)}
+  	  	end	  	
+  	  	
+  	  end
+  	  
+  	  describe "when attepmting to visit a protected page" do
+  	    	  	
+  	  	before do
+  	  	  visit edit_user_path(user)
+  	  	  fill_in "Email",    with: user.email
+  	  	  fill_in "Password", with: user.password
+  	  	  click_button "Sign in"
+  	  	end
+  	  	
+  	  	describe "after signin in" do
+  	  	  it {should have_title('Edit user')}
+  	  	  
+  	  	  describe "when sign in again" do
+  	  	  	before do
+  	  	  	  delete session_path(user)
+  	  	  	  visit signin_path
+  	  	  	  fill_in "Email",    with: user.email
+  	  	  	  fill_in "Password", with: user.password
+  	  	  	  click_button "Sign in"
+  	  	  	end
+  	  	  	
+  	  	  	it {should have_title(user.name)}
+  	  	  	
+  	  	  end
+  	  	end
+  	  	
+  	  	
+  	  end
+  	  
   	  
   	end
   	

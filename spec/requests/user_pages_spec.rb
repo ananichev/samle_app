@@ -13,7 +13,7 @@ describe "UserPages" do
   	
   	it {should have_title('All users')}
   	it {should have_content('All users')}
-  	
+  	  	
   	describe "pagination" do
   	  
   	  before(:all) {30.times {FactoryGirl.create(:user)}}
@@ -83,7 +83,7 @@ describe "UserPages" do
   	  	fill_in "Name", 				 with: "Example User2"
   	  	fill_in "Email", 				 with: "user2@example.com"
   	  	fill_in "Password", 			 with: "foobar"
-  	  	fill_in "Password confirmation", with: "foobar"
+  	  	fill_in "Confirm password",      with: "foobar"
   	  end
   		
   	  it "should create a user" do
@@ -154,6 +154,31 @@ describe "UserPages" do
   	specify {expect(user.reload.name).to eq new_name}
   	specify {expect(user.reload.email).to eq new_email}
     end
+    
+      describe "forbidden attributes" do
+    
+        let(:params) do 
+      	  {user: {admin: true, password: user.password, password_confirmation: user.password}}
+  	    end
+      
+        before do
+          sign_in user, no_capybara: true
+          patch user_path(user), params
+        end
+      
+        specify {expect(user.reload).not_to be_admin}
+    	
+      end
+    
+  end
+  
+  describe "which are not sign in" do
+  	
+  	let(:user) {FactoryGirl.create(:user)}
+  	  	
+  	it {should_not have_link('Profile', href: user_path(user))}
+  	it {should_not have_link('Settings', href: edit_user_path(user))}
+  	
   end
 	
 end
