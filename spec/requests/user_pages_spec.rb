@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "UserPages" do
   
-  subject {page}
+  subject { page }
   
   describe "index" do
   	let(:user) { FactoryGirl.create(:user) }
@@ -11,37 +11,37 @@ describe "UserPages" do
   	  visit users_path
   	end
   	
-  	it {should have_title('All users')}
-  	it {should have_content('All users')}
+  	it { should have_title('All users') }
+  	it { should have_content('All users') }
   	  	
   	describe "pagination" do
   	  
-  	  before(:all) {30.times {FactoryGirl.create(:user)}}
-  	  after(:all)  {User.delete_all}
+  	  before(:all) { 30.times {FactoryGirl.create(:user)} }
+  	  after(:all)  { User.delete_all }
   	  
-  	  it {should have_selector('div.pagination')}
+  	  it { should have_selector('div.pagination') }
   			
   	end
   	
   	describe "delete links" do
   	  
-  	  it {should_not have_link('delete')}
+  	  it { should_not have_link('delete') }
   	  
   	  describe "as an admin user" do
-  	  	let(:admin) {FactoryGirl.create(:admin)}
+  	  	let(:admin) { FactoryGirl.create(:admin) }
   	  	before do
   	  	  sign_in admin
   	  	  visit users_path
   	  	end
   	  	
-  	  	it {should have_link('delete', href: user_path(User.first))}
+  	  	it { should have_link('delete', href: user_path(User.first)) }
   	  	it "should be able to delete another user" do
   	  	  expect do
   	  	  	click_link('delete', match: :first)
   	  	  end.to change(User, :count).by(-1)
   	  	end
   	  	
-  	  	it {should_not have_link('delete', href: user_path(admin))}
+  	  	it { should_not have_link('delete', href: user_path(admin)) }
   	  	
   	  end	
   	end
@@ -57,21 +57,21 @@ describe "UserPages" do
 	
   describe "signup page" do
     
-  	before {visit signup_path}
-  	let(:submit) {"Create my account"}
+  	before { visit signup_path }
+  	let(:submit) { "Create my account" }
   	
   	describe "with invalid information" do
   		
   	  it "should not create a user" do
-  	  	expect {click_button submit}.not_to change(User, :count)
+  	  	expect { click_button submit }.not_to change(User, :count)
   	  end
   	  
   	  describe "after submission" do
   	  	
-  	  	before {click_button submit}
+  	  	before { click_button submit }
   	  	
-  	  	it {should have_title('Sign Up')}
-  	  	it {should have_content('error')}
+  	  	it { should have_title('Sign Up') }
+  	  	it { should have_content('error') }
   	  	 	  	
   	  end
   		
@@ -87,58 +87,56 @@ describe "UserPages" do
   	  end
   		
   	  it "should create a user" do
-  	  	expect {click_button submit}.to change(User, :count).by(1)
+  	  	expect { click_button submit }.to change(User, :count).by(1)
   	  end
   	  
   	  describe "after saving the user" do
-  	  	before {click_button submit}
+  	  	before { click_button submit }
   	  	
-  	  	let(:user) {User.find_by(email: 'user2@example.com')}
+  	  	let(:user) { User.find_by(email: 'user2@example.com') }
   	  	
-  	  	it {should have_title(user.name)}
-  	  	it {should have_selector('div.alert.alert-success', text: 'Wellcome')}  	  	
+  	  	it { should have_title(user.name) }
+  	  	it { should have_selector('div.alert.alert-success', text: 'Wellcome') }  	  	
   	  end
-  		
-  	end
+ 	end
   	
-  	it {should have_content('Sign Up')}
-  	it {should have_title(full_title('Sign Up'))}
+  	it { should have_content('Sign Up') }
+  	it { should have_title(full_title('Sign Up')) }
   	
-	
   end
   
   describe "profile page" do
-  	let(:user) {FactoryGirl.create(:user)}
-  	before {visit user_path(user)}
+  	let(:user) { FactoryGirl.create(:user) }
+  	before { visit user_path(user) }
   	
-  	it {should have_content(user.name)}
-  	it {should have_title(user.name)}
+  	it { should have_content(user.name) }
+  	it { should have_title(user.name) }
   	
   end
   
   describe "edit" do
   	
-  	let(:user) {FactoryGirl.create(:user)}
+  	let(:user) { FactoryGirl.create(:user) }
   	before do
   	  sign_in user
   	  visit edit_user_path(user)
   	end
   	
   	describe "page" do
-  	  it {should have_content("Update your profile")}
-  	  it {should have_title("Edit user")}
-  	  it {should have_link('change', href: 'http://gravatar.com/emails' )}
+  	  it { should have_content("Update your profile") }
+  	  it { should have_title("Edit user") }
+  	  it { should have_link('change', href: 'http://gravatar.com/emails' ) }
   	end
   	
   	describe "with invalid information" do
-  	  before {click_button "Save changes"}
+  	  before { click_button "Save changes" }
   	  
-  	  it {should have_content("error")}
+  	  it { should have_content("error") }
   	end
   	
   	describe "with valid information" do
-  	  let(:new_name)  {"New Name"}
-  	  let(:new_email) {"new@example.com"}
+  	  let(:new_name)  { "New Name" }
+  	  let(:new_email) { "new@example.com" }
   	 
   	  before do  
   	    fill_in "Name",             with: new_name
@@ -148,17 +146,17 @@ describe "UserPages" do
   	    click_button "Save changes"
   	  end
   	
-  	it {should have_title(new_name)}
-  	it {should have_selector('div.alert.alert-success')}
-  	it {should have_link('Sign out', href: session_path(user.id))}
-  	specify {expect(user.reload.name).to eq new_name}
-  	specify {expect(user.reload.email).to eq new_email}
+  	it { should have_title(new_name) }
+  	it { should have_selector('div.alert.alert-success') }
+  	it { should have_link('Sign out', href: session_path(user.id)) }
+  	specify { expect(user.reload.name).to eq new_name }
+  	specify { expect(user.reload.email).to eq new_email }
     end
     
       describe "forbidden attributes" do
     
         let(:params) do 
-      	  {user: {admin: true, password: user.password, password_confirmation: user.password}}
+      	  { user: { admin: true, password: user.password, password_confirmation: user.password } }
   	    end
       
         before do
@@ -166,7 +164,7 @@ describe "UserPages" do
           patch user_path(user), params
         end
       
-        specify {expect(user.reload).not_to be_admin}
+        specify { expect(user.reload).not_to be_admin }
     	
       end
     
@@ -174,10 +172,10 @@ describe "UserPages" do
   
   describe "which are not sign in" do
   	
-  	let(:user) {FactoryGirl.create(:user)}
+  	let(:user) { FactoryGirl.create(:user) }
   	  	
-  	it {should_not have_link('Profile', href: user_path(user))}
-  	it {should_not have_link('Settings', href: edit_user_path(user))}
+  	it { should_not have_link('Profile', href: user_path(user)) }
+  	it { should_not have_link('Settings', href: edit_user_path(user)) }
   	
   end
 	

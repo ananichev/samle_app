@@ -78,8 +78,5 @@ class UsersController < ApplicationController
   def for_signed_in_users
   	redirect_to(root_url) if signed_in?
   end
-  
-  
-
 
 end
