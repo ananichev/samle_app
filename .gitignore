@@ -17,3 +17,5 @@
 doc/
 database.yml
 .secret
+db/schema.rb
+.idea/
